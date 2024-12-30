@@ -1,0 +1,26 @@
+# Use Ubuntu as base image
+FROM ubuntu:20.04
+
+# Set environment variable to avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Set the timezone to your preferred time zone (example: "Asia/Kolkata")
+ENV TZ=Asia/Kolkata
+
+# Update and install necessary packages including Apache HTTP server
+RUN apt-get update -y && \
+    apt-get install -y apache2 tzdata
+
+# Set the system timezone
+RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure --frontend noninteractive tzdata
+
+# Copy your custom index.html file
+COPY index.html /var/www/html/index.html
+
+# Expose port 80
+EXPOSE 80
+
+# Start the Apache HTTP server
+CMD ["apache2ctl", "-D", "FOREGROUND"]
+
